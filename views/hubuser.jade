@@ -1,0 +1,7 @@
+extends layout
+
+block content 
+	h1= title
+	form#formAddUser(name="findblogs", method="post",action="/findblogs")
+		input#inputUserName(type="text", placeholder="GitHub username", name="username")
+		button#btnSubmit(type="submit") submit
