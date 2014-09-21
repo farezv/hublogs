@@ -1,5 +1,6 @@
 extends layout
 
 block content
-  h1= title
-  p Insert blog url to #{title}
+	h1 #{title} 
+	p 
+		| #[a(href='http://#{blogLink}') #{blogLink}]
