@@ -37,7 +37,7 @@ router.post('/findblogs', function(req, res) {
 		} else {
 		// Deal with error case where url can't be found
 			console.log(error);
-			res.render('error', { title: 'Oops, something went wrong!'});
+			res.render('error', { message: 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =('});
 		}
 	});	
 });
