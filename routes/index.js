@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var hubuser = require('../public/javascripts/hubuser');
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('hubuser', { title: 'Find a GitHub user\'s blog/website' });
+  res.render('main', { title: 'Find a GitHub user\'s blog/website' });
 });
 
 /* GET Blog results page. */
@@ -30,10 +31,13 @@ router.post('/findblogs', function(req, res) {
 		}, function(error, response, body) {
 		// Parse the JSON to find blog url and clean it up
 		if(!error && response.statusCode == 200) {
-			var blogUrl = JSON.parse(body).blog;
-			blogUrl = urlCleanup(blogUrl)
-			blogUrl = encodeURIComponent(blogUrl);
-			res.redirect('blogs/' + blogUrl);
+			var user = new hubuser();
+			console.log(user);
+			user.blog = JSON.parse(body).blog;
+			user.blog = urlCleanup(user.blog);
+
+			user.blog = encodeURIComponent(user.blog);
+			res.redirect('blogs/' + user.blog);
 		} else {
 		// Deal with error case where url can't be found
 			console.log(error);
