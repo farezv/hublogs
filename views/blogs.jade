@@ -1,8 +1,12 @@
 extends layout
 
 block content
-	h1 #{title} 
-	p 
-		| #[a(href='http://#{blogLink}') #{blogLink}]
+	h1 Praise the Octocats! 
+	for hubuser in users
+		ul 
+			p
+				b #{hubuser.nameOnProfile}
+				div.avatar #[img(src='#{hubuser.avatar}')]
+				#[a(href='http://#{hubuser.blog}') #{hubuser.blog}]
 	p
-		| #[img(src='https://octodex.github.com/images/hubot.jpg')]
+		div.hubot #[img(src='https://octodex.github.com/images/hubot.jpg')]
