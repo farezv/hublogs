@@ -1,13 +1,42 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	padding: 50px;
+	font: 24px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #00B7FF;
+	color: #00B7FF;
+	font-size: 22px;
+}
+
+img {
+	height: 300px;
+	width: auto;
+	padding-bottom: 2px;
 }
 
 .hubot {
+	height: 200px;
+	width: auto;
+}
+
+.name {
+	font: 26px;
+	font-style: bold;
+	padding-bottom: 10px;
+	padding-top: 5px;
+}
+
+.avatar {
 	height: 50%;
-	width: 50%;
+	width: auto;
+	/*border: 20px;
+	border-color: #000;*/
+}
+
+.user {
+	height: 490px;
+	width: 250px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	position: relative;
 }
