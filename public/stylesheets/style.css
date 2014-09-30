@@ -1,5 +1,5 @@
 body {
-	padding: 50px;
+	padding: 25px;
 	font: 24px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -27,7 +27,7 @@ img {
 }
 
 .avatar {
-	height: 50%;
+	height: 230px;
 	width: auto;
 	/*border: 20px;
 	border-color: #000;*/

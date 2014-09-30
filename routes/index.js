@@ -22,7 +22,7 @@ router.get('/blogs/:username?', function(req, res) {
 router.post('/findblogs', function(req, res) {
 	// Build the search url
 	var searchUrl = 'https://api.github.com/users/' + req.body.username;
-	console.log('searchUrl: ' + searchUrl);
+	console.log('searching user: ' + searchUrl);
 	// Access the api and retrieve the JSON
 	request({
 			url: searchUrl,
@@ -32,15 +32,21 @@ router.post('/findblogs', function(req, res) {
 		}, function(error, response, body) {
 		// Parse JSON to hubuser object instance
 		if(!error && response.statusCode == 200) {
-			var user = new hubuser(JSON.parse(body).avatar_url, 
-								   JSON.parse(body).html_url,
-								   JSON.parse(body).name,
-								   JSON.parse(body).company,
-								   JSON.parse(body).blog);
-			user.blog = urlCleanup(user.blog);
-			// user = encodeURIComponents(user);
-			hubusers = [user];
-			res.redirect('blogs/' + req.body.username);
+			
+			// Single user case
+			if(JSON.parse(body).type == 'User') {
+				var user = new hubuser(JSON.parse(body).avatar_url, 
+									   JSON.parse(body).html_url,
+									   JSON.parse(body).name,
+									   JSON.parse(body).company,
+									   JSON.parse(body).blog);
+				user.blog = urlCleanup(user.blog);
+				// user = encodeURIComponents(user);
+				hubusers = [user];
+				res.redirect('blogs/' + req.body.username);
+			} else if(JSON.parse(body).type == 'Organization') {
+				handleOrganizations(req.body.username);
+			}
 		} else {
 		// Deal with error case where url can't be found
 			console.log(error);
@@ -48,6 +54,11 @@ router.post('/findblogs', function(req, res) {
 		}
 	});	
 });
+
+function handleOrganizations(name) {
+	var searchUrl = 'https://api.github.com/orgs/' + name + '/members';
+	console.log('searching organization: ' + searchUrl);
+}
 
 function encodeURIComponents(user) {
 	user.avatar = encodeURIComponent(user.avatar);
