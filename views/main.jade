@@ -3,5 +3,6 @@ extends layout
 block content 
 	h1= title
 	form#formAddUser(name="findblogs", method="post",action="/findblogs")
-		input#inputUserName(type="text", placeholder="GitHub username", name="username")
-		button#btnSubmit(type="submit") search
+		div.userinput
+					input(type="text", placeholder="GitHub username", name="username" class="textbox")
+					button(type="submit" class="btnSearch") search

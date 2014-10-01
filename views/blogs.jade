@@ -3,10 +3,7 @@ extends layout
 block content
 	h1
 		#[img.hubot(src='https://octodex.github.com/images/hubot.jpg')]
-	
-	for hubuser in users
-		ul 
-			div.user
+	each hubuser in users
+				div.user
 						div.name #{hubuser.nameOnProfile}
-						#[img.avatar(src='#{hubuser.avatar}')]
-						#[a.blog-link(href='http://#{hubuser.blog}') #{hubuser.blog}]
+						#[img.avatar(src='#{hubuser.avatar}')] #[a(href='http://#{hubuser.blog}') #{hubuser.blog}]
