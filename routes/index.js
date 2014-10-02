@@ -3,6 +3,7 @@ var router = express.Router();
 var request = require('request');
 var hubuser = require('../public/javascripts/hubuser');
 
+var typoMessage = 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =(';
 var hubsers;
 
 /* GET home page. */
@@ -13,6 +14,8 @@ router.get('/', function(req, res) {
 /* GET Blog results page. */
 router.get('/blogs/:username?', function(req, res) {
 	if(hubusers) {
+		printPropertyInList(hubusers, "blog");
+		printPropertyInList(hubusers, "nameOnProfile");
 		res.render('blogs', { users: hubusers });
 	} else res.render('blogs', { title: 'Couldn\'t find the blog link :('});
 });
@@ -22,15 +25,15 @@ router.post('/findblogs', function(req, res) {
 	// Build the search url
 	var searchUrl = 'https://api.github.com/users/' + req.body.username;
 	console.log('searching user: ' + searchUrl);
-	// Access the api and retrieve the JSON
+	// Access the api and retrieve JSON for single user
 	request({
 			url: searchUrl,
 			headers: {
 				'User-Agent': 'request'
 			}
 		}, function(error, response, body) {
-				// Parse JSON to hubuser object instance
 				if(!error && response.statusCode == 200) {
+					// Parse JSON to hubuser object instance
 					hubusers = [];
 					// Single user case
 					if(JSON.parse(body).type == 'User') {
@@ -41,12 +44,27 @@ router.post('/findblogs', function(req, res) {
 						handleOrganizations(req.body.username, res);
 					}
 				} else {
-				// Deal with error case where url can't be found
 					console.log(error);
-					res.render('error', { message: 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =('});
+					res.render('error', { message: typoMessage });
 				}
 			});	
 	});
+
+function apiRequest(searchUrl) {
+	request({
+			url: searchUrl,
+			headers: {
+				'User-Agent': 'request'
+			}
+		}, function(error, response, body) {
+				if(!error && response.statusCode == 200) {
+					handleUser(body);
+				} else {
+					console.log(error);
+					res.render('error', { message: typoMessage });
+				}
+			});
+}
 
 function handleUser(body) {
 	var user = new hubuser(JSON.parse(body).avatar_url, 
@@ -72,14 +90,23 @@ function handleOrganizations(name, res) {
 				hubusers = [];
 				var members = JSON.parse(body);
 				for(var i = 0; i < members.length; i++) {
+					console.log(members[i].url);
+					apiRequest(members[i].url);
 					// Not stringifying each member json gave you unexpected 
-					handleUser(JSON.stringify(members[i]));
+					// handleUser(JSON.stringify(members[i]));
 				}
-				res.redirect('blogs/');
+				console.log(hubusers.length);
+				hubusersFilled(res, members.length);
 			} else {
-				res.render('error', { message: 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =('});
+				res.render('error', { message: typoMessage });
 			}
 	});
+}
+
+function hubusersFilled(res, num) {
+	console.log('members: ' + num);
+	// while(hubusers.length != num) {}
+	res.redirect('blogs/');
 }
 
 function encodeURIComponents(user) {
@@ -102,6 +129,12 @@ function urlCleanup(url) {
 			url = url.substring(0, url.length - 1);
 		}
 		return url;
+	}
+}
+
+function printPropertyInList(list, propName) {
+	for(var i = 0; i < list.length; i++) {
+		console.log(list[i].propName);
 	}
 }
 
