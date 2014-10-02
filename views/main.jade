@@ -4,5 +4,6 @@ block content
 	h1= title
 	form#formAddUser(name="findblogs", method="post",action="/findblogs")
 		div.userinput
-					input(type="text", placeholder="GitHub username", name="username" class="textbox")
-					button(type="submit" class="btnSearch") search
+					div.textBoxDiv 
+						input(type="text", placeholder="GitHub username", name="username" class="textbox")
+						button(type="submit" class="btnSearch") search

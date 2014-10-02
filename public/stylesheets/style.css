@@ -27,13 +27,15 @@ img {
 }
 
 .textBoxDiv {
+	width: auto;
+	height: 50%;
 	padding-top: 20px;
 	padding-right: 25px;
 	text-align: left;
 }
 
 .textbox {
-	width: auto;
+	width: 75%;
 	height: 50%;
 	font-size: 30px;
 	border: 2px;
@@ -42,14 +44,13 @@ img {
 }
 
 .searchButtonDiv {
-	padding-left: 25px;
-	text-align: right;
+	/*padding-left: 25px;*/
+	/*text-align: right;*/
 }
 
 .btnSearch {
-	width: 150px;
-	height: auto;
-	height: auto;
+	width: auto;
+	height: 100%;
 	font-size: 30px;
 	border: 2px;
 	border-radius: 10px;
@@ -59,7 +60,7 @@ img {
 */
 
 .hubot {
-	height: 200px;
+	height: 300px;
 	width: auto;
 }
 
@@ -79,12 +80,12 @@ img {
 .avatar {
 	height: 230px;
 	width: auto;
-	/*border: 20px;
-	border-color: #000;*/
+	border: 20px;
+	border-radius: 125px;
 }
 
 .user {
-	height: auto;
+	height: 300px;
 	width: 250px;
 	padding-top: 5px;
 	/*padding-bottom: 5px;*/
