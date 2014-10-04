@@ -14,8 +14,8 @@ router.get('/', function(req, res) {
 /* GET Blog results page. */
 router.get('/blogs/:username?', function(req, res) {
 	if(hubusers) {
-		printPropertyInList(hubusers, "blog");
-		printPropertyInList(hubusers, "nameOnProfile");
+		// printPropertyInList(hubusers, "blog");
+		// printPropertyInList(hubusers, "nameOnProfile");
 		res.render('blogs', { users: hubusers });
 	} else res.render('blogs', { title: 'Couldn\'t find the blog link :('});
 });
@@ -29,7 +29,7 @@ router.post('/findblogs', function(req, res) {
 	request({
 			url: searchUrl,
 			headers: {
-				'User-Agent': 'request'
+				'User-Agent': 'farezv-hublogs'
 			}
 		}, function(error, response, body) {
 				if(!error && response.statusCode == 200) {
@@ -50,11 +50,11 @@ router.post('/findblogs', function(req, res) {
 			});	
 	});
 
-function apiRequest(searchUrl) {
+function apiRequest(searchUrl, res) {
 	request({
 			url: searchUrl,
 			headers: {
-				'User-Agent': 'request'
+				'User-Agent': 'farezv-hublogs'
 			}
 		}, function(error, response, body) {
 				if(!error && response.statusCode == 200) {
@@ -83,7 +83,7 @@ function handleOrganizations(name, res) {
 	request({
 		url: searchUrl,
 		headers: {
-			'User-Agent': 'request'
+			'User-Agent': 'farezv-hublogs'
 		}
 	}, function(error, response, body) {
 			if(!error && response.statusCode == 200) {
@@ -91,7 +91,7 @@ function handleOrganizations(name, res) {
 				var members = JSON.parse(body);
 				for(var i = 0; i < members.length; i++) {
 					console.log(members[i].url);
-					apiRequest(members[i].url);
+					apiRequest(members[i].url, res);
 					// Not stringifying each member json gave you unexpected 
 					// handleUser(JSON.stringify(members[i]));
 				}
