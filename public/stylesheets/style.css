@@ -65,16 +65,16 @@ img {
 }
 
 .name {
-	height: 50px;
+	height: 25px;
 	font: 26px;
 	font-style: bold;
-/*	padding-bottom: 10px;
-	padding-top: 5px;*/
+	padding-top: 15px;
 }
 
 .blog-link {
 	height: 50px;
 	font-size: 22px;
+	color: #145F5F;
 }
 
 .avatar {
@@ -87,7 +87,9 @@ img {
 .user {
 	height: 300px;
 	width: 250px;
-	padding-top: 5px;
-	/*padding-bottom: 5px;*/
+	/*padding-top: 50px;*/
+	padding-bottom: 50px;
 	position: relative;
+	background-color: #BFDBDB;
+	text-align: center;
 }

@@ -5,6 +5,6 @@ block content
 		#[img.hubot(src='https://octodex.github.com/images/hubot.jpg')]
 	each hubuser in users
 				div.user
-						h4 #{hubuser.nameOnProfile}
+						h4.name #{hubuser.nameOnProfile}
 						#[img.avatar(src='#{hubuser.avatar}')]
-						#[a(href='http://#{hubuser.blog}') #{hubuser.blog}]
+						#[a.blog-link(href='http://#{hubuser.blog}') #{hubuser.blog}]
