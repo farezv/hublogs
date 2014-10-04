@@ -68,7 +68,7 @@ img {
 	height: 25px;
 	font: 26px;
 	font-style: bold;
-	padding-top: 15px;
+	/*padding-top: 15px;*/
 }
 
 .blog-link {
@@ -85,11 +85,24 @@ img {
 }
 
 .user {
-	height: 300px;
-	width: 250px;
-	/*padding-top: 50px;*/
-	padding-bottom: 50px;
-	position: relative;
+	height: 350px;
+	width: 300px;
+	margin: 25px 25px 25px 25px;
+	padding-bottom: 35px;
 	background-color: #BFDBDB;
 	text-align: center;
+	border: 20px;
+	border-radius: 25px;
+	float: left;
+}
+
+.wrapper {
+	border: 2px transparent #000;
+	overflow: hidden;
+}
+
+@media screen and (max-width: 800px) {
+	.wrapper {
+		height: auto;
+	}
 }
