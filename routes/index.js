@@ -5,6 +5,7 @@ var hubuser = require('../public/javascripts/hubuser');
 
 var typoMessage = 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =(';
 var hubsers;
+var singleUserOrOrg;
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -37,10 +38,13 @@ router.post('/findblogs', function(req, res) {
 					hubusers = [];
 					// Single user case
 					if(JSON.parse(body).type == 'User') {
-						handleUser(body);
+						var user = jsonToHubuser(body);
+						hubusers.push(user);
 						res.redirect('blogs/' + req.body.username);
 					} 
 					if(JSON.parse(body).type == 'Organization') {
+						var user = jsonToHubuser(body);
+						singleUserOrOrg = user;
 						handleOrganizations(req.body.username, res);
 					}
 				} else {
@@ -58,7 +62,8 @@ function apiRequest(searchUrl, res) {
 			}
 		}, function(error, response, body) {
 				if(!error && response.statusCode == 200) {
-					handleUser(body);
+					var user = jsonToHubuser(body);
+					hubusers.push(user);
 				} else {
 					console.log(error);
 					res.render('error', { message: typoMessage });
@@ -66,14 +71,15 @@ function apiRequest(searchUrl, res) {
 			});
 }
 
-function handleUser(body) {
-	var user = new hubuser(JSON.parse(body).avatar_url, 
+function jsonToHubuser(body) {
+	var user = new hubuser(JSON.parse(body).login,
+						   JSON.parse(body).avatar_url, 
 						   JSON.parse(body).html_url,
 						   JSON.parse(body).name,
 						   JSON.parse(body).company,
 						   JSON.parse(body).blog);
 	user.blog = urlCleanup(user.blog);
-	hubusers.push(user);
+	return user;
 }
 
 function handleOrganizations(name, res) {
@@ -96,17 +102,17 @@ function handleOrganizations(name, res) {
 					// handleUser(JSON.stringify(members[i]));
 				}
 				console.log(hubusers.length);
-				hubusersFilled(res, members.length);
+				hubusersFilled(name, res, members.length);
 			} else {
 				res.render('error', { message: typoMessage });
 			}
 	});
 }
 
-function hubusersFilled(res, num) {
+function hubusersFilled(name, res, num) {
 	console.log('members: ' + num);
 	// while(hubusers.length != num) {}
-	res.redirect('blogs/');
+	res.redirect('blogs/' + name);
 }
 
 function encodeURIComponents(user) {
