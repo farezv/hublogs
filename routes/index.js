@@ -9,7 +9,7 @@ var singleUserOrOrg;
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('main', { title: 'Find a GitHub user\'s blog/website' });
+  res.render('main', { title: 'Like to read developer blogs but don\'t know where to start?' });
 });
 
 /* GET Blog results page. */
