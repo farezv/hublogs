@@ -1,9 +1,10 @@
 extends layout
 
 block content 
-	h1= title
+	h1 Welcome to HubLogs
+	h2= title
 	form#formAddUser(name="findblogs", method="post",action="/findblogs")
 		div.userinput
 					div.textBoxDiv 
-						input(type="text", placeholder="GitHub username", name="username" class="textbox")
+						input(type="text", placeholder="GitHub user or org name", name="username" class="textbox")
 						button(type="submit" class="btnSearch") search
