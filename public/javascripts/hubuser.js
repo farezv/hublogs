@@ -1,9 +1,10 @@
-var hubuser = function HubUser(avatar_url, html_url, name, company, blog) {
+var hubuser = function HubUser(login, avatar_url, html_url, name, company, blog) {
+	this.login = login;
 	this.avatar = avatar_url;
 	this.github = html_url;
 	this.nameOnProfile = name;
 	this.company = company;
-	this.blog = blog; 
+	this.blog = blog;
 
 	this.print = function() {
 		console.log('Name: ' + this.nameOnProfile);
