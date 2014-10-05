@@ -1,11 +1,11 @@
 extends layout
 
 block content
-	h1
-		#[img.hubot(src='https://octodex.github.com/images/hubot.jpg')]
+	h1 Enjoy the HubLogs!
 	div.wrapper
 		each hubuser in users
 					div.user
 							h4.name #{hubuser.nameOnProfile}
 							#[img.avatar(src='#{hubuser.avatar}')]
 							#[a.blog-link(href='http://#{hubuser.blog}') #{hubuser.blog}]
+							iframe.github-button(src="http://ghbtns.com/github-btn.html?user=#{hubuser.login}&type=follow&count=true&size=large",   allowtransparency="true", frameborder="0", scrolling="0", width="250", height="75")

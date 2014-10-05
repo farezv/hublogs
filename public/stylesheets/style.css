@@ -8,6 +8,10 @@ a {
 	font-size: 22px;
 }
 
+a:hover {
+    color: #7FB2B2;
+}
+
 img {
 	height: 300px;
 	width: auto;
@@ -18,7 +22,7 @@ img {
 */
 
 .userinput {
-	width: 500px;
+	width: 550px;
 	height: 100px;
 	background-color: #003333;
 	border: 3px solid #0D4D4D;
@@ -37,10 +41,12 @@ img {
 .textbox {
 	width: 75%;
 	height: 50%;
-	font-size: 30px;
+	font-size: 26px;
 	border: 2px;
 	border-radius: 10px;
-	padding-top: 25px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	margin: 1px 10px 10px 10px;
 }
 
 .searchButtonDiv {
@@ -51,7 +57,7 @@ img {
 .btnSearch {
 	width: auto;
 	height: 100%;
-	font-size: 30px;
+	font-size: 26px;
 	border: 2px;
 	border-radius: 10px;
 }
@@ -68,13 +74,15 @@ img {
 	height: 25px;
 	font: 26px;
 	font-style: bold;
+	color: #ECF0F1;
 	/*padding-top: 15px;*/
 }
 
 .blog-link {
 	height: 50px;
 	font-size: 22px;
-	color: #145F5F;
+	color: #ECF0F1;
+	margin-bottom: 25px;
 }
 
 .avatar {
@@ -85,15 +93,21 @@ img {
 }
 
 .user {
-	height: 350px;
+	height: 400px;
 	width: 300px;
 	margin: 25px 25px 25px 25px;
 	padding-bottom: 35px;
-	background-color: #BFDBDB;
+	background-color: #444444;
 	text-align: center;
 	border: 20px;
 	border-radius: 25px;
 	float: left;
+}
+
+.github-button {
+	margin-top: 10px;
+	margin-left: 20px;
+	text-align: center;
 }
 
 .wrapper {
