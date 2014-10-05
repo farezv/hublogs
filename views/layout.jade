@@ -5,3 +5,16 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     block content
+  footer
+    p  
+       |  Made by 
+       |  #[a(href='http://farez.ca') Farez Vadsaria] 
+       |  with
+       |  #[img.tea-icon(src='http://icons.iconarchive.com/icons/kzzu/i-love-you/256/Coffee-icon.png')]
+       | and the
+       |  #[a(href='https://developer.github.com') GitHub Api]
+    p  
+        #[iframe.github-button(src="http://ghbtns.com/github-btn.html?user=farezv&type=follow&count=true&size=large",   allowtransparency="true", frameborder="0", scrolling="0", width="205", height="30")]   
+        #[a.star-button(class="github-button" href="https://github.com/farezv/hublogs" data-icon="octicon-star" data-style="mega" data-count-href="/farezv/hublogs/stargazers" data-count-api="/repos/hublogs/#stargazers_count" height='50px' width='50px') Star]
+        #[a(class="github-button" href="https://github.com/farezv/hublogs/issues" data-icon="octicon-issue-opened" data-style="mega" data-count-api="/repos/farezv/hublogs#open_issues_count") Issue]
+        script(async, defer, id="github-bjs", src="https://buttons.github.io/buttons.js")

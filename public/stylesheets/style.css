@@ -120,3 +120,35 @@ img {
 		height: auto;
 	}
 }
+
+/* Footer
+*/
+
+footer {
+	background-color: #ECF0F1;
+	padding-top: 2px;
+	padding-left: 10px;
+	padding-bottom: 2px;
+	border: 20px;
+	border-radius: 25px;
+	font-size: 18px;
+	font-style: bold; 
+	text-align: center; 
+}
+
+footer a {
+	font-size: 18px;  
+	font-style: bold; 
+}
+
+.tea-icon {
+	height: 20px;
+	width: 20px;
+	margin-right: 5px;
+}
+
+.star_button {
+	margin-bottom: 25px;
+	height: 50px;
+	width: 50px;
+}
