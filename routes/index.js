@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var hubuser = require('../public/javascripts/hubuser');
+var redis = require('redis');
+var client;
 
 var typoMessage = 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =(';
 var hubsers;
@@ -9,6 +11,10 @@ var singleUserOrOrg;
 
 /* GET home page. */
 router.get('/', function(req, res) {
+  client = redis.createClient();
+  client.on('error', function(err) {
+  	console.log('Error ' + err);
+  });
   res.render('main', { title: 'Like to read developer blogs but don\'t know where to start?' });
 });
 
