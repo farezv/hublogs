@@ -29,35 +29,44 @@ router.get('/blogs/:username?', function(req, res) {
 
 /* POST to Find Blogs */
 router.post('/findblogs', function(req, res) {
-	// Build the search url
-	var searchUrl = 'https://api.github.com/users/' + req.body.username;
-	console.log('searching user: ' + searchUrl);
-	// Access the api and retrieve JSON for single user
-	request({
-			url: searchUrl,
-			headers: {
-				'User-Agent': 'farezv-hublogs'
-			}
-		}, function(error, response, body) {
-				if(!error && response.statusCode == 200) {
-					// Parse JSON to hubuser object instance
-					hubusers = [];
-					// Single user case
-					if(JSON.parse(body).type == 'User') {
-						var user = jsonToHubuser(body);
-						hubusers.push(user);
-						res.redirect('blogs/' + req.body.username);
-					} 
-					if(JSON.parse(body).type == 'Organization') {
-						var user = jsonToHubuser(body);
-						singleUserOrOrg = user;
-						handleOrganizations(req.body.username, res);
-					}
-				} else {
-					console.log(error);
-					res.render('error', { message: typoMessage });
+	var cacheReply;
+	// Check cache first
+	client.get(req.body.username, function(err, reply) {
+		console.log('Redis says: ' + reply);	
+		cacheReply = reply;
+	});
+
+	if(cacheReply == null) {
+		// Build the search url
+		var searchUrl = 'https://api.github.com/users/' + req.body.username;
+		console.log('searching user: ' + searchUrl);
+		// Access the api and retrieve JSON for single user
+		request({
+				url: searchUrl,
+				headers: {
+					'User-Agent': 'farezv-hublogs'
 				}
-			});	
+			}, function(error, response, body) {
+					if(!error && response.statusCode == 200) {
+						// Parse JSON to hubuser object instance
+						hubusers = [];
+						// Single user case
+						if(JSON.parse(body).type == 'User') {
+							var user = jsonToHubuser(body);
+							hubusers.push(user);
+							res.redirect('blogs/' + req.body.username);
+						} 
+						if(JSON.parse(body).type == 'Organization') {
+							var user = jsonToHubuser(body);
+							singleUserOrOrg = user;
+							handleOrganizations(req.body.username, res);
+						}
+					} else {
+						console.log(error);
+						res.render('error', { message: typoMessage });
+					}
+				});
+	}	
 	});
 
 function apiRequest(searchUrl, res) {
