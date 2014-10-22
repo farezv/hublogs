@@ -52,6 +52,7 @@ router.post('/findblogs', function(req, res) {
 						hubusers = [];
 						// Single user case
 						if(JSON.parse(body).type == 'User') {
+							client.hset(req.body.username, body)
 							var user = jsonToHubuser(body);
 							hubusers.push(user);
 							res.redirect('blogs/' + req.body.username);
