@@ -6,7 +6,7 @@ var redis = require('redis');
 var client;
 
 var typoMessage = 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =(';
-var hubsers;
+var hubusers;
 var singleUserOrOrg;
 
 /* GET home page. */
@@ -21,8 +21,6 @@ router.get('/', function(req, res) {
 /* GET Blog results page. */
 router.get('/blogs/:username?', function(req, res) {
 	if(hubusers) {
-		// printPropertyInList(hubusers, "blog");
-		// printPropertyInList(hubusers, "nameOnProfile");
 		res.render('blogs', { users: hubusers });
 	} else res.render('blogs', { title: 'Couldn\'t find the blog link :('});
 });
@@ -117,27 +115,12 @@ function handleOrganizations(name, res) {
 					// Not stringifying each member json gave you unexpected 
 					// handleUser(JSON.stringify(members[i]));
 				}
-				console.log(hubusers.length);
-				hubusersFilled(name, res, members.length);
-			} else {
+				console.log('# members: ' + hubusers.length);
+                res.redirect('blogs/' + name);
+            } else {
 				res.render('error', { message: typoMessage });
 			}
 	});
-}
-
-function hubusersFilled(name, res, num) {
-	console.log('members: ' + num);
-	// while(hubusers.length != num) {}
-	res.redirect('blogs/' + name);
-}
-
-function encodeURIComponents(user) {
-	user.avatar = encodeURIComponent(user.avatar);
-	user.github = encodeURIComponent(user.github);
-	user.nameOnProfile = encodeURIComponent(user.nameOnProfile);
-	user.company = encodeURIComponent(user.company);
-	user.blog = encodeURIComponent(user.blog);
-	return user;
 }
 
 function urlCleanup(url) {
@@ -151,12 +134,6 @@ function urlCleanup(url) {
 			url = url.substring(0, url.length - 1);
 		}
 		return url;
-	}
-}
-
-function printPropertyInList(list, propName) {
-	for(var i = 0; i < list.length; i++) {
-		console.log(list[i].propName);
 	}
 }
 
