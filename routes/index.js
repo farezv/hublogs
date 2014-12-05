@@ -27,49 +27,58 @@ router.get('/blogs/:username?', function(req, res) {
 
 /* POST to Find Blogs */
 router.post('/findblogs', function(req, res) {
-	var cacheReply;
 	// Check cache first
 	client.get(req.body.username, function(err, reply) {
 		console.log('Redis says: ' + reply);	
-		cacheReply = reply;
-	});
 
-	if(cacheReply == null) {
-		// Build the search url
-		var searchUrl = 'https://api.github.com/users/' + req.body.username;
-		console.log('searching user: ' + searchUrl);
-		// Access the api and retrieve JSON for single user
-		request({
-				url: searchUrl,
-				headers: {
-					'User-Agent': 'farezv-hublogs'
-				}
-			}, function(error, response, body) {
-					if(!error && response.statusCode == 200) {
-						// Parse JSON to hubuser object instance
-						hubusers = [];
-						// Single user case
-						if(JSON.parse(body).type == 'User') {
-							client.hset(req.body.username, body)
-							var user = jsonToHubuser(body);
-							hubusers.push(user);
-							res.redirect('blogs/' + req.body.username);
-						} 
-						if(JSON.parse(body).type == 'Organization') {
-							var user = jsonToHubuser(body);
-							singleUserOrOrg = user;
-							handleOrganizations(req.body.username, res);
-						}
-					} else {
-						console.log(error);
-						res.render('error', { message: typoMessage });
-					}
-				});
-	}	
-	});
+        if(reply == null) {
+            // Build the search url
+            var searchUrl = 'https://api.github.com/users/' + req.body.username;
+            console.log('searching user: ' + searchUrl);
+            // Access the api and retrieve JSON for single user
+            request({
+                    url: searchUrl,
+                    headers: {
+                        'User-Agent': 'farezv-hublogs'
+                    }
+                }, function(error, response, body) {
+                        if(!error && response.statusCode == 200) {
+                            // Parse JSON to hubuser object instance
+                            hubusers = [];
+                            // Single user case
+                            if(JSON.parse(body).type == 'User') {
+                                client.set(req.body.username, body, redis.print);
+                                var user = jsonToHubuser(body);
+                                hubusers.push(user);
+                                res.redirect('blogs/' + req.body.username);
+                            }
+                            if(JSON.parse(body).type == 'Organization') {
+                                client.set(req.body.username, body, redis.print);
+                                var user = jsonToHubuser(body);
+                                singleUserOrOrg = user;
+                                handleOrganizations(req.body.username, res);
+                            }
+                        } else {
+                            console.log(error);
+                            res.render('error', { message: typoMessage });
+                        }
+                    });
+        } else {
+            if(reply.type == 'User') {
+                var user = jsonToHubuser(reply);
+                hubusers.push(user);
+                res.redirect('blogs' + req.body.username);
+            } else {
+                handleOrganizations(req.body.username, res);
+            }
+        }
+    });
+});
 
 function apiRequest(searchUrl, res) {
-	request({
+    console.log('searching user: ' + searchUrl);
+
+    request({
 			url: searchUrl,
 			headers: {
 				'User-Agent': 'farezv-hublogs'
@@ -77,7 +86,8 @@ function apiRequest(searchUrl, res) {
 		}, function(error, response, body) {
 				if(!error && response.statusCode == 200) {
 					var user = jsonToHubuser(body);
-					hubusers.push(user);
+                    client.set(user.login, body, redis.print);
+                    hubusers.push(user);
 				} else {
 					console.log(error);
 					res.render('error', { message: typoMessage });
@@ -109,12 +119,22 @@ function handleOrganizations(name, res) {
 			if(!error && response.statusCode == 200) {
 				hubusers = [];
 				var members = JSON.parse(body);
+                console.log('Length of members array is ' + members.length);
 				for(var i = 0; i < members.length; i++) {
-					console.log(members[i].url);
-					apiRequest(members[i].url, res);
-					// Not stringifying each member json gave you unexpected 
-					// handleUser(JSON.stringify(members[i]));
-				}
+                    var url = members[i].url;
+                    // Check cache first
+                    client.get(members[i].login, function(err, reply) {
+                        console.log('Redis says: ' + reply);
+                        if (reply == null) {
+                            apiRequest(url, res);
+                        } else {
+                            var user = jsonToHubuser(reply);
+                            hubusers.push(user);
+                        }
+                        // Not stringifying each member json gave you unexpected
+                        // handleUser(JSON.stringify(members[i]));
+                    });
+                }
 				console.log('# members: ' + hubusers.length);
                 res.redirect('blogs/' + name);
             } else {
