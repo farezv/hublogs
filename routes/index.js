@@ -8,6 +8,7 @@ var client;
 var typoMessage = 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =(';
 var hubusers;
 var singleUserOrOrg;
+var globalRes;
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -27,9 +28,14 @@ router.get('/blogs/:username?', function(req, res) {
 
 /* POST to Find Blogs */
 router.post('/findblogs', function(req, res) {
-	// Check cache first
+  globalRes = res;
+  hubusers = [];
+
+    // Check cache first
 	client.get(req.body.username, function(err, reply) {
-		console.log('Redis says: ' + reply);	
+        console.log('Redis says: ' + reply);
+
+        if(err) console.log('Error around line 38: ' + err);
 
         if(reply == null) {
             // Build the search url
@@ -41,40 +47,47 @@ router.post('/findblogs', function(req, res) {
                     headers: {
                         'User-Agent': 'farezv-hublogs'
                     }
-                }, function(error, response, body) {
-                        if(!error && response.statusCode == 200) {
-                            // Parse JSON to hubuser object instance
-                            hubusers = [];
-                            // Single user case
-                            if(JSON.parse(body).type == 'User') {
-                                client.set(req.body.username, body, redis.print);
-                                var user = jsonToHubuser(body);
-                                hubusers.push(user);
-                                res.redirect('blogs/' + req.body.username);
-                            }
-                            if(JSON.parse(body).type == 'Organization') {
-                                client.set(req.body.username, body, redis.print);
-                                var user = jsonToHubuser(body);
-                                singleUserOrOrg = user;
-                                handleOrganizations(req.body.username, res);
-                            }
-                        } else {
-                            console.log(error);
-                            res.render('error', { message: typoMessage });
-                        }
-                    });
+            }, parseApiResponse);
         } else {
-            if(reply.type == 'User') {
-                var user = jsonToHubuser(reply);
-                hubusers.push(user);
-                res.redirect('blogs' + req.body.username);
-            } else {
-                handleOrganizations(req.body.username, res);
-            }
+            parseCacheReply(reply, req.body.username, res);
         }
     });
 });
 
+/* Handles response from redis cache */
+function parseCacheReply(reply, username, res) {
+    if(JSON.parse(reply).type == 'User') {
+        var user = jsonToHubuser(reply);
+        hubusers.push(user);
+        res.redirect('blogs/' + username);
+    } else {
+        handleOrganizations(username, res);
+    }
+}
+
+/* Handles api call result for initial search */
+function parseApiResponse(error, response, body) {
+        if(!error && response.statusCode == 200) {
+            // Single user case
+            if(JSON.parse(body).type == 'User') {
+                client.set(req.body.username, body, redis.print);
+                var user = jsonToHubuser(body);
+                hubusers.push(user);
+                globalRes.redirect('blogs/' + req.body.username);
+            }
+            if(JSON.parse(body).type == 'Organization') {
+                client.set(req.body.username, body, redis.print);
+                var user = jsonToHubuser(body);
+                singleUserOrOrg = user;
+                handleOrganizations(req.body.username, res);
+            }
+        } else {
+            console.log('Error around line 80: ' + error);
+            globalRes.render('error', { message: typoMessage });
+        }
+ }
+
+/* Makes an api request for a single user  */
 function apiRequest(searchUrl, res) {
     console.log('searching user: ' + searchUrl);
 
