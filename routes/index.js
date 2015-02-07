@@ -3,7 +3,7 @@ var router = express.Router();
 var request = require('request');
 var hubuser = require('../public/javascripts/hubuser');
 var redis = require('redis');
-var client;
+var redisClient;
 
 var typoMessage = 'Oops, something went wrong! The GitHub user or organization name may not exist or you made a typo =(';
 var hubusers;
@@ -12,10 +12,16 @@ var globalRes;
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  client = redis.createClient();
-  client.on('error', function(err) {
-  	console.log('Error ' + err);
-  });
+    if (process.env.REDISCLOUD_URL) {
+        var redisURL = require('url').parse(process.env.REDISCLOUD_URL);
+        redisClient = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+        redisClient.auth(redisURL.auth.split(":")[1]);
+    } else {
+        redisClient = redis.createClient();
+        redisClient.on('error', function (err) {
+            console.log('Error ' + err);
+        });
+    }
   res.render('main', { title: 'Like to read developer blogs but don\'t know where to start?' });
 });
 
@@ -32,7 +38,7 @@ router.post('/findblogs', function(req, res) {
   hubusers = [];
 
     // Check cache first
-	client.get(req.body.username, function(err, reply) {
+    redisClient.get(req.body.username, function(err, reply) {
         console.log('Redis says: ' + reply);
 
         if(err) console.log('Error around line 38: ' + err);
@@ -70,13 +76,13 @@ function parseApiResponse(error, response, body) {
         if(!error && response.statusCode == 200) {
             // Single user case
             if(JSON.parse(body).type == 'User') {
-                client.set(req.body.username, body, redis.print);
+                redisClient.set(req.body.username, body, redis.print);
                 var user = jsonToHubuser(body);
                 hubusers.push(user);
                 globalRes.redirect('blogs/' + req.body.username);
             }
             if(JSON.parse(body).type == 'Organization') {
-                client.set(req.body.username, body, redis.print);
+                redisClient.set(req.body.username, body, redis.print);
                 var user = jsonToHubuser(body);
                 singleUserOrOrg = user;
                 handleOrganizations(req.body.username, res);
@@ -99,7 +105,7 @@ function apiRequest(searchUrl, res) {
 		}, function(error, response, body) {
 				if(!error && response.statusCode == 200) {
 					var user = jsonToHubuser(body);
-                    client.set(user.login, body, redis.print);
+                    redisClient.set(user.login, body, redis.print);
                     hubusers.push(user);
 				} else {
 					console.log(error);
@@ -136,7 +142,7 @@ function handleOrganizations(name, res) {
 				for(var i = 0; i < members.length; i++) {
                     var url = members[i].url;
                     // Check cache first
-                    client.get(members[i].login, function(err, reply) {
+                    redisClient.get(members[i].login, function(err, reply) {
                         console.log('Redis says: ' + reply);
                         if (reply == null) {
                             apiRequest(url, res);
