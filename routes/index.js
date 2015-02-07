@@ -53,7 +53,9 @@ router.post('/findblogs', function(req, res) {
                     headers: {
                         'User-Agent': 'farezv-hublogs'
                     }
-            }, parseApiResponse);
+            },  function(error, response, body) {
+                    parseApiResponse(error, response, body, req.body.username);
+                });
         } else {
             parseCacheReply(reply, req.body.username, res);
         }
@@ -72,20 +74,20 @@ function parseCacheReply(reply, username, res) {
 }
 
 /* Handles api call result for initial search */
-function parseApiResponse(error, response, body) {
+function parseApiResponse(error, response, body, username) {
         if(!error && response.statusCode == 200) {
             // Single user case
             if(JSON.parse(body).type == 'User') {
-                redisClient.set(req.body.username, body, redis.print);
+                redisClient.set(username, body, redis.print);
                 var user = jsonToHubuser(body);
                 hubusers.push(user);
-                globalRes.redirect('blogs/' + req.body.username);
+                globalRes.redirect('blogs/' + username);
             }
             if(JSON.parse(body).type == 'Organization') {
-                redisClient.set(req.body.username, body, redis.print);
+                redisClient.set(username, body, redis.print);
                 var user = jsonToHubuser(body);
                 singleUserOrOrg = user;
-                handleOrganizations(req.body.username, res);
+                handleOrganizations(username, res);
             }
         } else {
             console.log('Error around line 80: ' + error);
